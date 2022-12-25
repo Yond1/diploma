@@ -68,7 +68,7 @@ There are several options that you should be aware of when using forever. Most o
     'watch': true,               // Value indicating if we should watch files.
     'watchIgnoreDotFiles': null, // Whether to ignore file starting with a '.'
     'watchIgnorePatterns': null, // Ignore patterns to use when watching files.
-    'watchDirectory': null,      // Top-level directory to watch from.
+    'watchDirectory': null,      // Top-level directory to watch from. You can provide multiple watchDirectory options to watch multiple directories (e.g. for cli: forever start -w='app' -w='some_other_directory' app\index.js)
 
     //
     // All or nothing options passed along to `child_process.spawn`.
@@ -131,7 +131,7 @@ When running the forever CLI tool, it produces debug outputs about which files h
 var child = new (forever.Monitor)('your-filename.js');
 
 child.on('watch:restart', function(info) {
-    console.error('Restaring script because ' + info.file + ' changed');
+    console.error('Restarting script because ' + info.file + ' changed');
 });
 
 child.on('restart', function() {

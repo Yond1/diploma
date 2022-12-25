@@ -1,4 +1,4 @@
-import { Links } from 'Links'
+import { Links } from 'helpers/Links'
 import React from 'react'
 import { NavLink } from 'react-router-dom'
 
