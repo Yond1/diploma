@@ -3,8 +3,7 @@ export const Links = {
   CATALOG: "/catalog",
   ABOUT: "/about",
   CONTACTS: "/contacts",
-  ERROR: "*",
+  ERROR: "*" || "*/*" || "*/*/*",
   CART: "/cart",
   ITEM: "/items/:id",
-  
 };

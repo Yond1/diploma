@@ -5,7 +5,7 @@ interface Card {
     img: string,
     name: string,
     price: number,
-    id: number
+    id: number | string
 }
 
 export const Card: FC<Card> = ({ img, name, price, id }) => {

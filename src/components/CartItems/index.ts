@@ -1,0 +1,1 @@
+export { CartItems as default} from './CartItems'

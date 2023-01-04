@@ -1,5 +1,6 @@
 
 export const ContactPage = () => {
+    console.log('render')
     return (
         <section className="top-sales">
             <h2 className="text-center">Контакты</h2>

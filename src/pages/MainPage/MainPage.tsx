@@ -1,19 +1,26 @@
 import { useEffect, useState } from 'react'
 import { Card, Catalog, Loader } from 'components'
-import { Item, Size } from 'helpers/models'
+import { IItem, ISize } from 'helpers/models'
 import { useGetCatalogQuery, useGetTopQuery } from 'redux/API/getItems'
+import { useAppDispatch } from 'redux/hooks/hooks'
+import { getTextInput } from 'redux/slices/MainSlice'
 
 
 export const MainPage = () => {
 
-  const [topSales, setTopSales] = useState<Item<Size>[]>()
-  const { isLoading, data: items, isError } = useGetTopQuery()
-  const { data: catalogItems, isLoading: LoadCategory } = useGetCatalogQuery()
+  const dispatch = useAppDispatch()
+  const [topSales, setTopSales] = useState<IItem<ISize>[]>()
+  const { isLoading, data: items } = useGetTopQuery()
+
+  console.log('render')
 
   useEffect(() => {
     setTopSales(prev => prev = items)
-    console.log('render')
   }, [items])
+
+  useEffect(() => {
+    dispatch(getTextInput(''))
+  }, [])
 
   return (
     <>
@@ -28,7 +35,7 @@ export const MainPage = () => {
           })}
         </div>
       </section>
-      <Catalog items={catalogItems!} isLoading={LoadCategory} />
+      <Catalog />
     </>
   )
 }

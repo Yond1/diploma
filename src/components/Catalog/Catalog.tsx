@@ -1,51 +1,65 @@
-import Card from 'components/Card'
-import { Item, Size } from '../../helpers/models'
-import React, { FC, ReactNode, useEffect, useState } from 'react'
-import { useGetCategoriesQuery, useGetItemsByCategoryQuery, useGetItemsByNameQuery } from 'redux/API/getItems'
+import React, { FC, useEffect, useState } from 'react'
+import {
+    useGetCatalogQuery,
+    useGetCategoriesQuery,
+} from 'redux/API/getItems'
 import Loader from 'components/Loader'
 import { useDebouce } from 'hooks'
+import { useAppDispatch, useAppSelector } from 'redux/hooks/hooks'
+import { getData, getTextInput } from 'redux/slices/MainSlice'
+import CartItems from 'components/CartItems'
 
 
 
 interface Catalog {
-    items: Item<Size>[]
     isFormDisabled?: boolean
-    isLoading: boolean
 }
 
 
-export const Catalog: FC<Catalog> = ({ isFormDisabled = true, items, isLoading }) => {
+export const Catalog: FC<Catalog> = ({ isFormDisabled = true }) => {
+    const dispatch = useAppDispatch()
+    const [offset, setOffset] = useState<number>(0)
     const [changeValue, setChangeValue] = useState<string>('')
     const debounce = useDebouce(changeValue)
-    const [data, setData] = useState<Item<Size>[] | undefined>(items)
+    const { data: mainData, text } = useAppSelector(state => state.main)
     const [currCategory, setCurrCategory] = useState(0)
     const { data: categories } = useGetCategoriesQuery()
-    const { data: catItems } = useGetItemsByCategoryQuery(currCategory)
-    const { data: itemsByName } = useGetItemsByNameQuery(debounce)
+    const { data: catalogData, isFetching, isLoading, isError } = useGetCatalogQuery([offset, currCategory, debounce])
 
-    console.log(itemsByName)
+
+    const onHandleLoadItems = (e: React.MouseEvent) => {
+        if (offset % 6 !== 0) {
+            setOffset(prev => prev = prev)
+        } else {
+            setOffset(prev => prev += 6)
+        }
+    }
+
+    useEffect(() => {
+        setChangeValue(prev => prev = text)
+    }, [text])
+
+    useEffect(() => {
+        dispatch(getData(catalogData))
+    }, [catalogData])
 
     const onChangeSearch = (str: string) => {
         setChangeValue(str)
     }
     const onHandleCategory = (category: any) => {
+        setOffset(prev => prev = 0)
         setCurrCategory(prev => prev = category)
     }
     const onHandleResetFilter = () => {
+        setOffset(prev => prev = 0)
         setCurrCategory(prev => prev = 0)
     }
-    useEffect(() => {
-        if (debounce === '') {
-            setData(prev => prev = catItems)
-        } else {
-            setData(prev => prev = itemsByName)
-        }
-    }, [catItems, debounce, itemsByName])
 
     return (
         <main>
+            {isError && <h1>{'Fetch Error'}</h1>}
             {isLoading && <Loader />}
-            {!isLoading && <div className="row">
+            {!isLoading && !isError && <div className="row">
                 <div className="col">
                     <section className="catalog">
                         <h2 className="text-center">Каталог</h2>
@@ -73,22 +87,14 @@ export const Catalog: FC<Catalog> = ({ isFormDisabled = true, items, isLoading }
                                 )
                             })}
                         </ul>
-                        <div className="row">
-                            {data!.length < 1 && 'Ничего не найдено'}
-                            {data?.map(item => {
-                                return (
-                                    <Card
-                                        key={item.id}
-                                        id={item.id}
-                                        img={item.images[0]}
-                                        name={item.title}
-                                        price={item.price} />
-                                )
-                            })}
-                        </div>
-                        <div className="text-center">
-                            <button className="btn btn-outline-primary">Загрузить ещё</button>
-                        </div>
+                        {isFetching && <Loader />}
+                        {!isFetching && <CartItems data={mainData} />}
+                        {!isFetching && <div className="text-center">
+                            <button
+                                disabled={catalogData!.length < 6 || catalogData === undefined ? true : false}
+                                onClick={onHandleLoadItems}
+                                className="btn btn-outline-primary">Загрузить ещё</button>
+                        </div>}
                     </section>
                 </div>
             </div>}

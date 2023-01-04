@@ -1,12 +1,26 @@
-import { ItemsApi } from './API/getItems';
+import { ItemsApi } from "./API/getItems";
 import { configureStore, ThunkAction, Action } from "@reduxjs/toolkit";
+import { cartReducer } from "./slices/CartSlice";
+import { MainReducer } from "./slices/MainSlice";
+import {
+  localMiddleware,
+  reHydrateStore,
+} from "./middleware/localStorageMiddleware";
 
 export const store = configureStore({
   reducer: {
-    [ItemsApi.reducerPath]: ItemsApi.reducer
+    [ItemsApi.reducerPath]: ItemsApi.reducer,
+    cart: cartReducer,
+    main: MainReducer,
   },
+  preloadedState: {
+    cart: {
+      items: reHydrateStore(),
+    },
+  },
+
   middleware: (getDefaultMiddleware) =>
-  getDefaultMiddleware().concat(ItemsApi.middleware),
+    getDefaultMiddleware().concat(ItemsApi.middleware).concat(localMiddleware),
 });
 
 export type AppDispatch = typeof store.dispatch;
