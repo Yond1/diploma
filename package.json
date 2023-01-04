@@ -47,6 +47,7 @@
     "@types/react-router": "^5.1.19",
     "@types/react-router-dom": "^5.3.3",
     "axios": "^1.2.1",
+    "nanoid": "^4.0.0",
     "react-router": "^6.5.0",
     "react-router-dom": "^6.5.0",
     "sass": "^1.57.0"

@@ -1,13 +1,34 @@
 import Banner from 'components/Banner'
 import { Links } from 'helpers/Links'
-import { Link } from 'react-router-dom'
-import { NavLink } from 'react-router-dom'
+import { useState } from 'react'
+import { useDispatch } from 'react-redux'
+import { Link, useNavigate } from 'react-router-dom'
+import { useAppSelector } from 'redux/hooks/hooks'
+import { getTextInput } from 'redux/slices/MainSlice'
 import headerLogo from '../../assets/img/header-logo.png'
 
 
 export const Header = () => {
-
+    const [value, setValue] = useState<string>('')
+    const [invisible, setInvisible] = useState<boolean>(true)
     const { ABOUT, CATALOG, CONTACTS, MAIN, CART } = Links
+    const navigate = useNavigate()
+    const dispatch = useDispatch()
+    const { items } = useAppSelector(state => state.cart)
+
+
+    const onHandleToggleFrom = () => {
+        if (!invisible && value.length > 3) {
+            navigate('/catalog')
+            dispatch(getTextInput(value))
+            setValue(prev => prev = '')
+        }
+        setInvisible(prev => prev = !prev)
+    }
+
+    const onChangeValue = (value: string) => {
+        setValue(prev => prev = value)
+    }
 
     return (
         <>
@@ -45,16 +66,19 @@ export const Header = () => {
                                 </ul>
                                 <div>
                                     <div className="header-controls-pics">
-                                        <div data-id="search-expander" className="header-controls-pic header-controls-search"></div>
+                                        <div
+                                            onClick={onHandleToggleFrom}
+                                            data-id="search-expander" className="header-controls-pic header-controls-search">
+                                        </div>
                                         <Link to={CART}>
                                             <div className="header-controls-pic header-controls-cart">
-                                                <div className="header-controls-cart-full">2</div>
+                                                <div className="header-controls-cart-full">{items.length}</div>
                                                 <div className="header-controls-cart-menu"></div>
                                             </div>
                                         </Link>
                                     </div>
-                                    <form data-id="search-form" className="header-controls-search-form form-inline invisible">
-                                        <input className="form-control" placeholder="Поиск" />
+                                    <form data-id="search-form" className={`header-controls-search-form form-inline ${invisible ? 'invisible' : ''}`}>
+                                        <input onChange={(e) => { onChangeValue(e.target.value) }} value={value} className="form-control" placeholder="Поиск" />
                                     </form>
                                 </div>
                             </div>

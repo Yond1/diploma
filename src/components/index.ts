@@ -1,4 +1,5 @@
-import { Catalog } from "./Catalog/Catalog";
+import CartItems from "./CartItems";
+import Catalog from "./Catalog";
 import Item from "./Item";
 import Card from "./Card";
 import Loader from "./Loader";
@@ -8,6 +9,8 @@ import Footer from "./Footer";
 import Main from "./Main";
 import Header from "./Header";
 import App from "./App";
+import Cart from "./Cart";
+import Order from "./Order";
 
 export {
   App,
@@ -20,4 +23,7 @@ export {
   Card,
   Item,
   Catalog,
+  Cart,
+  Order,
+  CartItems,
 };
